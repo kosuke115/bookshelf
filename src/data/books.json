@@ -105,7 +105,7 @@
     "status": "want_to_read"
   },
   {
-    "id": "design-of-everyday-things",
+    "id": "design-of-everyday-things-2",
     "title": "誰のためのデザイン？?????????!!!!!!!!",
     "author": "ドナルド・A・ノーマン",
     "publisher": "新曜社",
@@ -118,5 +118,5 @@
     "pageCount": 432,
     "coverImage": "/covers/design-of-everyday-things.jpg",
     "status": "read"
-  },
+  }
 ]
