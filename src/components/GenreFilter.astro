@@ -1,0 +1,55 @@
+---
+interface Props {
+  genres: string[];
+}
+
+const { genres } = Astro.props;
+---
+
+<div class="flex flex-wrap gap-2" id="genre-filter">
+  <button
+    class="genre-btn px-3 py-1.5 text-sm rounded-full bg-stone-800 text-white transition-colors"
+    data-genre="all"
+  >
+    すべて
+  </button>
+  {genres.map((genre) => (
+    <button
+      class="genre-btn px-3 py-1.5 text-sm rounded-full bg-stone-200 text-stone-600 hover:bg-stone-300 transition-colors"
+      data-genre={genre}
+    >
+      {genre}
+    </button>
+  ))}
+</div>
+
+<script>
+  function initGenreFilter() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.genre-btn');
+    const cards = document.querySelectorAll<HTMLElement>('[data-genre-card]');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const genre = btn.dataset.genre;
+
+        buttons.forEach((b) => {
+          b.classList.remove('bg-stone-800', 'text-white');
+          b.classList.add('bg-stone-200', 'text-stone-600');
+        });
+        btn.classList.remove('bg-stone-200', 'text-stone-600');
+        btn.classList.add('bg-stone-800', 'text-white');
+
+        cards.forEach((card) => {
+          if (genre === 'all' || card.dataset.genreCard === genre) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  initGenreFilter();
+  document.addEventListener('astro:after-swap', initGenreFilter);
+</script>

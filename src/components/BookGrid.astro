@@ -1,0 +1,20 @@
+---
+import BookCard from "./BookCard.astro";
+import type { Book } from "../types/book";
+
+interface Props {
+  books: Book[];
+}
+
+const { books } = Astro.props;
+---
+
+{books.length > 0 ? (
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    {books.map((book) => (
+      <BookCard book={book} />
+    ))}
+  </div>
+) : (
+  <p class="text-stone-400 text-center py-12">本が見つかりませんでした</p>
+)}

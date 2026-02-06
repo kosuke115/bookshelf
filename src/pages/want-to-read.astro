@@ -1,0 +1,25 @@
+---
+import Layout from "../layouts/Layout.astro";
+import BookCard from "../components/BookCard.astro";
+import type { Book } from "../types/book";
+
+const books: Book[] = (await import("../data/books.json")).default;
+const wantToRead = books.filter((b) => b.status === "want_to_read");
+---
+
+<Layout title="読みたいリスト">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">読みたいリスト</h1>
+    <span class="text-stone-400 text-sm">{wantToRead.length} 冊</span>
+  </div>
+
+  {wantToRead.length > 0 ? (
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {wantToRead.map((book) => (
+        <BookCard book={book} />
+      ))}
+    </div>
+  ) : (
+    <p class="text-stone-400 text-center py-12">読みたいリストは空です</p>
+  )}
+</Layout>

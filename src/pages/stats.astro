@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import StatsChart from "../components/StatsChart.astro";
+import type { Book } from "../types/book";
+
+const books: Book[] = (await import("../data/books.json")).default;
+---
+
+<Layout title="読書統計">
+  <h1 class="text-2xl font-bold mb-6">読書統計</h1>
+  <StatsChart books={books} />
+</Layout>

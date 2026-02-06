@@ -1,0 +1,145 @@
+---
+import type { Book } from "../types/book";
+
+interface Props {
+  books: Book[];
+}
+
+const { books } = Astro.props;
+
+const readBooks = books.filter((b) => b.status === "read");
+
+// Monthly read counts
+const monthlyCounts: Record<string, number> = {};
+readBooks.forEach((book) => {
+  const month = book.readDate.slice(0, 7); // YYYY-MM
+  monthlyCounts[month] = (monthlyCounts[month] || 0) + 1;
+});
+const sortedMonths = Object.keys(monthlyCounts).sort();
+
+// Genre counts
+const genreCounts: Record<string, number> = {};
+readBooks.forEach((book) => {
+  genreCounts[book.genre] = (genreCounts[book.genre] || 0) + 1;
+});
+
+// Summary stats
+const totalRead = readBooks.length;
+const avgRating = totalRead > 0
+  ? (readBooks.reduce((sum, b) => sum + b.rating, 0) / totalRead).toFixed(1)
+  : "0";
+const totalPages = readBooks.reduce((sum, b) => sum + b.pageCount, 0);
+
+// Year counts
+const yearCounts: Record<string, number> = {};
+readBooks.forEach((book) => {
+  const year = book.readDate.slice(0, 4);
+  yearCounts[year] = (yearCounts[year] || 0) + 1;
+});
+---
+
+<div class="space-y-8">
+  <!-- Summary cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg p-4 shadow-sm text-center">
+      <p class="text-3xl font-bold text-stone-800">{totalRead}</p>
+      <p class="text-sm text-stone-500 mt-1">読了冊数</p>
+    </div>
+    <div class="bg-white rounded-lg p-4 shadow-sm text-center">
+      <p class="text-3xl font-bold text-stone-800">{avgRating}</p>
+      <p class="text-sm text-stone-500 mt-1">平均評価</p>
+    </div>
+    <div class="bg-white rounded-lg p-4 shadow-sm text-center">
+      <p class="text-3xl font-bold text-stone-800">{totalPages.toLocaleString()}</p>
+      <p class="text-sm text-stone-500 mt-1">合計ページ数</p>
+    </div>
+    <div class="bg-white rounded-lg p-4 shadow-sm text-center">
+      <p class="text-3xl font-bold text-stone-800">{Object.keys(genreCounts).length}</p>
+      <p class="text-sm text-stone-500 mt-1">ジャンル数</p>
+    </div>
+  </div>
+
+  <!-- Monthly bar chart -->
+  <div class="bg-white rounded-lg p-6 shadow-sm">
+    <h3 class="text-lg font-semibold mb-4">月別読了冊数</h3>
+    <canvas id="monthly-chart" height="300"></canvas>
+  </div>
+
+  <!-- Genre pie chart -->
+  <div class="bg-white rounded-lg p-6 shadow-sm">
+    <h3 class="text-lg font-semibold mb-4">ジャンル別内訳</h3>
+    <div class="max-w-md mx-auto">
+      <canvas id="genre-chart" height="300"></canvas>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ sortedMonths, monthlyCounts, genreCounts }}>
+  async function initCharts() {
+    const { Chart, BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend, PieController } = await import('chart.js');
+    Chart.register(BarController, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend, PieController);
+
+    const monthLabels = sortedMonths.map((m) => {
+      const [y, mo] = m.split('-');
+      return `${y}/${mo}`;
+    });
+
+    // Monthly bar chart
+    const monthlyCtx = document.getElementById('monthly-chart');
+    if (monthlyCtx instanceof HTMLCanvasElement) {
+      new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+          labels: monthLabels,
+          datasets: [{
+            label: '冊数',
+            data: sortedMonths.map((m) => monthlyCounts[m]),
+            backgroundColor: 'rgba(68, 64, 60, 0.7)',
+            borderRadius: 4,
+          }],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 },
+            },
+          },
+          plugins: {
+            legend: { display: false },
+          },
+        },
+      });
+    }
+
+    // Genre pie chart
+    const colors = [
+      '#292524', '#78716c', '#a8a29e', '#d6d3d1',
+      '#57534e', '#44403c', '#1c1917', '#e7e5e4',
+    ];
+    const genreLabels = Object.keys(genreCounts);
+    const genreCtx = document.getElementById('genre-chart');
+    if (genreCtx instanceof HTMLCanvasElement) {
+      new Chart(genreCtx, {
+        type: 'pie',
+        data: {
+          labels: genreLabels,
+          datasets: [{
+            data: genreLabels.map((g) => genreCounts[g]),
+            backgroundColor: colors.slice(0, genreLabels.length),
+          }],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' },
+          },
+        },
+      });
+    }
+  }
+
+  initCharts();
+  document.addEventListener('astro:after-swap', initCharts);
+</script>

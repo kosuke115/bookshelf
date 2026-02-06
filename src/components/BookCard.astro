@@ -1,0 +1,38 @@
+---
+import StarRating from "./StarRating.astro";
+import type { Book } from "../types/book";
+
+interface Props {
+  book: Book;
+}
+
+const { book } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<a
+  href={`${base}books/${book.id}/`}
+  class="group block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+>
+  <div class="aspect-[2/3] bg-stone-200 overflow-hidden">
+    <img
+      src={`${base}${book.coverImage.replace(/^\//, "")}`}
+      alt={book.title}
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      loading="lazy"
+      onerror="this.style.display='none';this.parentElement.classList.add('flex','items-center','justify-center');this.parentElement.innerHTML='<span class=\\'text-stone-400 text-4xl\\'>📖</span>'"
+    />
+  </div>
+  <div class="p-3">
+    <h3 class="font-semibold text-sm leading-tight line-clamp-2 group-hover:text-stone-600 transition-colors">
+      {book.title}
+    </h3>
+    <p class="text-xs text-stone-500 mt-1 truncate">{book.author}</p>
+    {book.status === "read" && (
+      <div class="mt-1.5">
+        <StarRating rating={book.rating} size="sm" />
+      </div>
+    )}
+    <p class="text-xs text-stone-400 mt-1">{book.genre}</p>
+  </div>
+</a>

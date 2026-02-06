@@ -1,0 +1,20 @@
+---
+interface Props {
+  rating: number;
+  size?: "sm" | "md" | "lg";
+}
+
+const { rating, size = "md" } = Astro.props;
+
+const sizeClass = {
+  sm: "text-sm",
+  md: "text-lg",
+  lg: "text-2xl",
+}[size];
+---
+
+<span class={`inline-flex gap-0.5 ${sizeClass}`} aria-label={`評価: ${rating}/5`}>
+  {Array.from({ length: 5 }, (_, i) => (
+    <span class={i < rating ? "text-yellow-400" : "text-stone-300"}>&#9733;</span>
+  ))}
+</span>
