@@ -103,5 +103,20 @@
     "pageCount": 448,
     "coverImage": "/covers/refactoring.jpg",
     "status": "want_to_read"
-  }
+  },
+  {
+    "id": "design-of-everyday-things",
+    "title": "誰のためのデザイン？?????????!!!!!!!!",
+    "author": "ドナルド・A・ノーマン",
+    "publisher": "新曜社",
+    "firstEditionDate": "2015-04-23",
+    "rating": 4,
+    "readDate": "2024-12-01",
+    "memo": "日常のモノのデザインがいかにユーザーの行動に影響を与えるかを解説。アフォーダンスやシグニファイアなどの概念を学べる。ドアの押す・引くの問題（ノーマンドア）は有名。UIデザインにも通じる普遍的な内容。",
+    "genre": "デザイン",
+    "tags": ["UX", "デザイン思考", "認知科学"],
+    "pageCount": 432,
+    "coverImage": "/covers/design-of-everyday-things.jpg",
+    "status": "read"
+  },
 ]
